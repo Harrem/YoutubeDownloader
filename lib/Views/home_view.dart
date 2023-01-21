@@ -45,8 +45,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   decoration: InputDecoration(
                     hintText: "Paste Url",
                     prefixIcon: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.light_mode_rounded)),
+                        onPressed: () {}, icon: const Icon(Icons.link)),
                     suffixIcon: const Icon(Icons.paste_rounded),
                   ),
                 ),
