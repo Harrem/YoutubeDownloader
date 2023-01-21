@@ -8,7 +8,7 @@ Future<File?> createFile(
   await requestStoragePermission();
   final directory = await createDirectory(dirName);
   debugPrint(directory.path);
-  return File('${directory.path}/$dirName/$fileName.mp4');
+  return File('${directory.path}/$fileName.mp4');
 }
 
 Future<Directory> createDirectory(String dirName) async {
