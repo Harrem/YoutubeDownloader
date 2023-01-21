@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:ytd/Views/home_view.dart';
+import 'package:ytd/views/home_view.dart';
 
 class RouteGenerator {
-  static const String home = "./Views/home_view.dart";
+  static const String home = "./views/home_view.dart";
 
   RouteGenerator._();
 
