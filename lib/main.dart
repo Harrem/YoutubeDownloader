@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ytd/route.dart';
+import 'package:ytd/theme/custom_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,9 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'HTube Dl',
-      theme: ThemeData.dark(
-        useMaterial3: true,
-      ),
+      theme: CustomTheme().dark,
       debugShowCheckedModeBanner: false,
       initialRoute: RouteGenerator.home,
       onGenerateRoute: (settings) => RouteGenerator.generateRoute(settings),
