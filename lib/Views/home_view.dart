@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ytd/main.dart';
+import 'package:ytd/views/widgets/custom_widgets.dart';
 
 import '../util/downloader.dart';
 
@@ -12,7 +12,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   final _urlController = TextEditingController();
-  AnimationController? _animationCrtl;
   double initialHeight = 0;
   double percentage = 0.0;
   bool isLoading = false;
@@ -22,10 +21,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _animationCrtl = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    );
   }
 
   @override
@@ -133,32 +128,28 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 ),
               ),
               SizedBox(height: vGap),
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 1000),
-                height: initialHeight / 3,
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Choose Quality",
-                                style: Theme.of(context).textTheme.titleMedium),
-                            Text("some data would appear hear",
-                                style: Theme.of(context).textTheme.caption),
-                          ],
-                        ),
-                        ElevatedButton(
-                          onPressed: () {},
-                          child: const Text("1080p"),
-                        )
-                      ],
-                    ),
+              CardWithSideButtion(
+                titleText: "Choose Quality",
+                subtitleText: "some text goes here about ",
+                btnText: "Choose",
+                onPressed: () {},
+              ),
+              PopupMenuButton(
+                itemBuilder: (BuildContext context) =>
+                    <PopupMenuEntry<SampleItem>>[
+                  const PopupMenuItem<SampleItem>(
+                    value: SampleItem.itemOne,
+                    child: Text('Item 1'),
                   ),
-                ),
+                  const PopupMenuItem<SampleItem>(
+                    value: SampleItem.itemTwo,
+                    child: Text('Item 2'),
+                  ),
+                  const PopupMenuItem<SampleItem>(
+                    value: SampleItem.itemThree,
+                    child: Text('Item 3'),
+                  ),
+                ],
               ),
               SizedBox(height: vGap),
               SizedBox(
@@ -218,6 +209,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   }
 }
 
+enum SampleItem { itemOne, itemTwo, itemThree }
 
 // showModalBottomSheet(
 //                         context: context,
