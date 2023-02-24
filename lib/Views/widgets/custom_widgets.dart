@@ -36,7 +36,9 @@ class _CardWithSideButtionState extends State<CardWithSideButtion> {
               ],
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                widget.onPressed();
+              },
               child: Text(widget.btnText),
             )
           ],

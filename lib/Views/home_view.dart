@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ytd/views/widgets/custom_widgets.dart';
-
+import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import '../util/downloader.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -17,10 +18,28 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   bool isLoading = false;
   double vGap = 10.0;
   bool animate = false;
-
+  Video? video;
+  Channel? channel;
+  StreamManifest? manifest;
+  String format = "Format";
+  bool hasData = false;
   @override
   void initState() {
     super.initState();
+  }
+
+  Future<bool> get() async {
+    try {
+      final downloader = Downloader();
+      video = await downloader.getVideoInfo("vtNJMAyeP0s");
+      channel = await downloader.getChannelInfo(video!.channelId.value);
+      manifest = await downloader.getVideoManifest("vtNJMAyeP0s");
+      // debugPrint(manifest!.audioOnly[2].toJson().toString());
+    } catch (e) {
+      debugPrint(e.toString());
+      return false;
+    }
+    return true;
   }
 
   @override
@@ -30,9 +49,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         body: Container(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
           margin: const EdgeInsets.symmetric(horizontal: 20),
-          child: ListView(
-            physics: const NeverScrollableScrollPhysics(),
-            children: <Widget>[
+          child: Column(
+            children: [
               SizedBox(
                 height: 50,
                 child: TextField(
@@ -40,168 +58,226 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   decoration: InputDecoration(
                     hintText: "Paste Url",
                     prefixIcon: IconButton(
-                        onPressed: () {}, icon: const Icon(Icons.link)),
+                        onPressed: () async {
+                          // Clipboard.getData(Clipboard.kTextPlain).then((value) {
+                          //   if(value == null) return;
+                          //   debugPrint(value.text); //value is clipbarod data
+                          //   _urlController.text = value.text!;
+                          // });
+                          hasData = await get();
+                          setState(() {});
+                        },
+                        icon: const Icon(Icons.link)),
                     suffixIcon: const Icon(Icons.paste_rounded),
                   ),
                 ),
               ),
-              const Divider(),
-              SizedBox(height: vGap),
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 400),
-                height: initialHeight,
-                // transform: Matrix4.identity()..scale(_animationCrtl!.value),
-                child: Card(
-                  child: ListView(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(10),
-                    children: <Widget>[
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          const SizedBox(
-                            width: 130,
-                            height: 130,
-                            child: Card(color: Colors.black),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  width: 160,
-                                  child: Text(
-                                    "Title Text Goes Here and we are so happy to see it ",
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+              !hasData
+                  ? const SizedBox()
+                  : Expanded(
+                      child: ListView(
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: <Widget>[
+                          SizedBox(height: vGap),
+                          Card(
+                            child: ListView(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              padding: const EdgeInsets.all(10),
+                              children: <Widget>[
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 130,
+                                      height: 130,
+                                      child: Card(
+                                        color: Colors.black,
+                                        child: Image.network(
+                                            video!.thumbnails.mediumResUrl),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(15.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            width: 160,
+                                            child: Text(
+                                              video!.title,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleMedium,
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 10),
+                                          Text("channel: ${channel!.title}",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall),
+                                          const SizedBox(height: 10),
+                                          Text(
+                                              "Duration: ${video!.duration!.inMinutes} mins",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall),
+                                        ],
+                                      ),
+                                    )
+                                  ],
                                 ),
-                                const SizedBox(height: 10),
-                                Text("Channel: GrowBTV",
-                                    style: Theme.of(context).textTheme.caption),
-                                const SizedBox(height: 10),
-                                Text("Duration: 10 minutes",
-                                    style: Theme.of(context).textTheme.caption),
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Text(
+                                      "Description: ${video!.description}",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall),
+                                )
                               ],
                             ),
-                          )
+                          ),
+                          SizedBox(height: vGap),
+                          Card(
+                            child: Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text("Choose Format",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium),
+                                      Text("some data would appear hear",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall),
+                                    ],
+                                  ),
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        showMenu(
+                                          context: context,
+                                          position: const RelativeRect.fromLTRB(
+                                              100, 100, 100, 100),
+                                          items: [
+                                            PopupMenuItem(
+                                              value: "MP4",
+                                              onTap: () => setState(() {
+                                                format = "MP4";
+                                              }),
+                                              child: const Text("MP4"),
+                                            ),
+                                            PopupMenuItem(
+                                              value: "MP3",
+                                              onTap: () => setState(() {
+                                                format = "MP3";
+                                              }),
+                                              child: const Text("MP3"),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                      child: Text(format))
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: vGap),
+                          CardWithSideButtion(
+                            titleText: "Choose Quality",
+                            subtitleText: "some text goes here about ",
+                            btnText: "Choose",
+                            onPressed: () {
+                              showModalBottomSheet(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return SizedBox(
+                                      height: 300,
+                                      child: ListView.separated(
+                                        physics: const BouncingScrollPhysics(),
+                                        padding: const EdgeInsets.only(top: 10),
+                                        itemCount: manifest!.video.length,
+                                        separatorBuilder: ((context, index) =>
+                                            const Divider()),
+                                        itemBuilder: (context, index) =>
+                                            ListTile(
+                                          title: Text(manifest!
+                                              .video[index].qualityLabel),
+                                          leading: const Icon(
+                                              Icons.arrow_circle_down_outlined),
+                                          trailing: Text(
+                                            "${manifest!.video[index].size.totalMegaBytes.toStringAsFixed(2)} MB",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15)));
+                              // debugPrint("${manifest.videoOnly[5].fragments.isEmpty}");
+                              // downloader.downloadVideo(manifest.video[6],
+                              // videoTitle: video.title, channelTitle: channel.title);
+                              setState(() {
+                                isLoading = false;
+                              });
+                              // showMenu(
+                              //   context: context,
+                              //   position: const RelativeRect.fromLTRB(
+                              //       100, 100, 100, 100),
+                              //   items: List.generate(
+                              //     manifest!.streams.length,
+                              //     (index) => PopupMenuItem(
+                              //       child: Text(
+                              //           manifest!.streams[index].qualityLabel),
+                              //     ),
+                              //   ),
+                              // );
+                            },
+                          ),
+                          // PopupMenuButton(
+                          //   itemBuilder: (BuildContext context) =>
+                          //       <PopupMenuEntry<SampleItem>>[
+                          //     const PopupMenuItem<SampleItem>(
+                          //       value: SampleItem.itemOne,
+                          //       child: Text('Item 1'),
+                          //     ),
+                          //     const PopupMenuItem<SampleItem>(
+                          //       value: SampleItem.itemTwo,
+                          //       child: Text('Item 2'),
+                          //     ),
+                          //     const PopupMenuItem<SampleItem>(
+                          //       value: SampleItem.itemThree,
+                          //       child: Text('Item 3'),
+                          //     ),
+                          //   ],
+                          // ),
+                          SizedBox(height: vGap),
+                          const SizedBox(height: 20),
                         ],
                       ),
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        child: Text(
-                            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat... More",
-                            style: Theme.of(context).textTheme.caption),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(height: vGap),
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 700),
-                height: initialHeight / 3,
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Choose Format",
-                                style: Theme.of(context).textTheme.titleMedium),
-                            Text("some data would appear hear",
-                                style: Theme.of(context).textTheme.caption),
-                          ],
-                        ),
-                        ElevatedButton(
-                            onPressed: () {}, child: const Text("MP4"))
-                      ],
                     ),
-                  ),
-                ),
-              ),
-              SizedBox(height: vGap),
-              CardWithSideButtion(
-                titleText: "Choose Quality",
-                subtitleText: "some text goes here about ",
-                btnText: "Choose",
-                onPressed: () {},
-              ),
-              PopupMenuButton(
-                itemBuilder: (BuildContext context) =>
-                    <PopupMenuEntry<SampleItem>>[
-                  const PopupMenuItem<SampleItem>(
-                    value: SampleItem.itemOne,
-                    child: Text('Item 1'),
-                  ),
-                  const PopupMenuItem<SampleItem>(
-                    value: SampleItem.itemTwo,
-                    child: Text('Item 2'),
-                  ),
-                  const PopupMenuItem<SampleItem>(
-                    value: SampleItem.itemThree,
-                    child: Text('Item 3'),
-                  ),
-                ],
-              ),
-              SizedBox(height: vGap),
-              SizedBox(
-                width: 150,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    setState(() {
-                      isLoading = true;
-                    });
-                    await Future.delayed(const Duration(seconds: 5));
-                    final downloader = Downloader();
-                    var video = await downloader.getVideoInfo("vtNJMAyeP0s");
-                    var channel =
-                        await downloader.getChannelInfo(video.channelId.value);
-                    var manifest =
-                        await downloader.getVideoManifest("vtNJMAyeP0s");
-                    debugPrint(manifest.audioOnly[2].toJson().toString());
-                    setState(() {
-                      isLoading = false;
-                    });
-                  },
-                  child: isLoading
-                      ? const SizedBox(
-                          height: 28,
-                          width: 28,
-                          child: CircularProgressIndicator())
-                      : const Icon(Icons.arrow_forward_rounded),
-                ),
-              ),
-              const SizedBox(height: 20),
             ],
           ),
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            if (animate) {
-              // _animationCrtl!.value = 1;
-              // _animationCrtl!.forward();
-              setState(() {
-                initialHeight = 300;
-              });
-            } else {
-              // _animationCrtl!.value = 0;
-              // _animationCrtl!.reverse();
-              setState(() {
-                initialHeight = 0;
-              });
-            }
-            animate = !animate;
+          onPressed: () async {
+            hasData = await get();
+            setState(() {});
           },
-          child: const Icon(Icons.settings),
+          child: const Icon(Icons.download),
         ),
         // This trailing comma makes auto-formatting nicer for build methods.
       ),
@@ -210,35 +286,3 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 }
 
 enum SampleItem { itemOne, itemTwo, itemThree }
-
-// showModalBottomSheet(
-//                         context: context,
-//                         builder: (BuildContext context) {
-//                           return SizedBox(
-//                             height: 300,
-//                             child: ListView.separated(
-//                               physics: const BouncingScrollPhysics(),
-//                               padding: const EdgeInsets.only(top: 10),
-//                               itemCount: manifest.video.length,
-//                               separatorBuilder: ((context, index) =>
-//                                   const Divider()),
-//                               itemBuilder: (context, index) => ListTile(
-//                                 title: Text(manifest.video[index].qualityLabel),
-//                                 leading: const Icon(
-//                                     Icons.arrow_circle_down_outlined),
-//                                 trailing: Text(
-//                                   "${manifest.video[index].size.totalMegaBytes.toStringAsFixed(2)} MB",
-//                                   style: Theme.of(context).textTheme.subtitle1,
-//                                 ),
-//                               ),
-//                             ),
-//                           );
-//                         },
-//                         shape: RoundedRectangleBorder(
-//                             borderRadius: BorderRadius.circular(15)));
-//                     // debugPrint("${manifest.videoOnly[5].fragments.isEmpty}");
-//                     // downloader.downloadVideo(manifest.video[6],
-//                     // videoTitle: video.title, channelTitle: channel.title);
-//                     setState(() {
-//                       isLoading = false;
-//                     });
