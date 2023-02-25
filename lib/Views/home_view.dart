@@ -22,16 +22,18 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   Channel? channel;
   StreamManifest? manifest;
   String format = "Format";
+  String quality = "Quality";
+  int qIndex = 0;
   bool hasData = false;
   @override
   void initState() {
     super.initState();
   }
 
-  Future<bool> get() async {
+  Future<bool> get(String vidId) async {
     try {
       final downloader = Downloader();
-      video = await downloader.getVideoInfo("vtNJMAyeP0s");
+      video = await downloader.getVideoInfo(vidId);
       channel = await downloader.getChannelInfo(video!.channelId.value);
       manifest = await downloader.getVideoManifest("vtNJMAyeP0s");
       // debugPrint(manifest!.audioOnly[2].toJson().toString());
@@ -55,23 +57,38 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 height: 50,
                 child: TextField(
                   controller: _urlController,
+                  onChanged: (value) async {
+                    hasData = await get(value);
+                    setState(() {});
+                  },
                   decoration: InputDecoration(
                     hintText: "Paste Url",
-                    prefixIcon: IconButton(
+                    suffixIcon: IconButton(
                         onPressed: () async {
-                          // Clipboard.getData(Clipboard.kTextPlain).then((value) {
-                          //   if(value == null) return;
-                          //   debugPrint(value.text); //value is clipbarod data
-                          //   _urlController.text = value.text!;
-                          // });
-                          hasData = await get();
-                          setState(() {});
+                          var val =
+                              await Clipboard.getData(Clipboard.kTextPlain);
+                          if (val == null) return;
+                          _urlController.text = val.text!;
+                          setState(() {
+                            isLoading = true;
+                          });
+                          hasData = await get(_urlController.text);
+                          setState(() {
+                            isLoading = false;
+                          });
                         },
-                        icon: const Icon(Icons.link)),
-                    suffixIcon: const Icon(Icons.paste_rounded),
+                        icon: const Icon(Icons.paste_rounded)),
+                    prefixIcon: const Icon(Icons.link),
                   ),
                 ),
               ),
+              isLoading
+                  ? const Expanded(
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  : const SizedBox(),
               !hasData
                   ? const SizedBox()
                   : Expanded(
@@ -133,7 +150,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                 Container(
                                   padding: const EdgeInsets.all(10),
                                   child: Text(
-                                      "Description: ${video!.description}",
+                                      "Description: ${video!.engagement}",
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodySmall),
@@ -221,6 +238,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                                 .textTheme
                                                 .bodySmall,
                                           ),
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                            setState(() {
+                                              quality = manifest!
+                                                  .video[index].qualityLabel;
+                                            });
+                                          },
                                         ),
                                       ),
                                     );
@@ -274,8 +298,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            hasData = await get();
-            setState(() {});
+            if (format == "MP3") {
+              await Downloader().downloadVideo(manifest!.video[1]);
+              return;
+            } else if (format == "MP4") {
+              await Downloader().downloadVideo(manifest!.video[1]);
+              return;
+            }
           },
           child: const Icon(Icons.download),
         ),
