@@ -53,7 +53,7 @@ class Downloader {
 
     await for (var data in response) {
       received += data.length;
-      final percentage = (received / total * 100).toStringAsFixed(0);
+      final percentage = ((received / total) * 100).toStringAsFixed(0);
       print('Download progress: $percentage%');
       sink.add(data);
     }
