@@ -35,7 +35,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       final downloader = Downloader();
       video = await downloader.getVideoInfo(vidId);
       channel = await downloader.getChannelInfo(video!.channelId.value);
-      manifest = await downloader.getVideoManifest("vtNJMAyeP0s");
+      manifest = await downloader.getVideoManifest(vidId);
       // debugPrint(manifest!.audioOnly[2].toJson().toString());
     } catch (e) {
       debugPrint(e.toString());
@@ -57,6 +57,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 height: 50,
                 child: TextField(
                   controller: _urlController,
+                  clipBehavior: Clip.antiAlias,
+                  autocorrect: false,
                   onChanged: (value) async {
                     hasData = await get(value);
                     setState(() {});
