@@ -1,5 +1,4 @@
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'file_ops.dart';
 import 'dart:io';
