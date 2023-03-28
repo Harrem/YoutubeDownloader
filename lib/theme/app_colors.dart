@@ -18,7 +18,7 @@ class AppColors {
 
   static const primaryDark = Color(0xFF0A539F);
   static const onPrimaryContainerDark = Color(0xFFEADDFF);
-  static const secondaryDark = Color(0xFF625B71);
+  static const secondaryDark = Color(0xFF0A539F);
   static const secondaryContainerDark = Color(0xFFE8DEF8);
   static const tertiaryDark = Color(0xFF7D5260);
   static const tertiaryContainerDark = Color(0xFFFFD8E4);
