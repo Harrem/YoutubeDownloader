@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:ytd/views/widgets/custom_widgets.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
@@ -23,6 +24,8 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   StreamManifest? manifest;
   String format = "Format";
   String quality = "Quality";
+  bool isAudio = true;
+  int selectedIndex = 0;
   int qIndex = 0;
   bool hasData = false;
   @override
@@ -295,6 +298,52 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                         ],
                       ),
                     ),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: const Text("Choose Audio"),
+              ),
+              Wrap(
+                children: List.generate(10, (index) {
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 5),
+                    child: ChoiceChip(
+                      // selectedColor: Colors.blue[900],
+                      label: const Text("144p"),
+                      selected: selectedIndex == index && isAudio,
+                      onSelected: (selected) {
+                        setState(() {
+                          selectedIndex = index;
+                          isAudio = true;
+                        });
+                      },
+                    ),
+                  );
+                }),
+              ),
+              const Divider(),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: const Text("Choose Video"),
+              ),
+              Wrap(
+                children: List.generate(10, (index) {
+                  return Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 5),
+                    child: ChoiceChip(
+                      label: const Text("144p"),
+                      selected: selectedIndex == index && !isAudio,
+                      onSelected: (selected) {
+                        setState(() {
+                          selectedIndex = index;
+                          isAudio = false;
+                        });
+                      },
+                    ),
+                  );
+                }),
+              ),
             ],
           ),
         ),
