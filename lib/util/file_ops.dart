@@ -32,13 +32,10 @@ Future<String?> getDownloadPath() async {
       directory = await getApplicationDocumentsDirectory();
     } else {
       directory = Directory('/storage/emulated/0/ytd');
-      // Put file in global download folder, if for an unknown reason it didn't exist, we fallback
-      // ignore: avoid_slow_async_io
-      if (!await directory.exists())
-        directory = await getExternalStorageDirectory();
+      await directory.create(recursive: true);
     }
   } catch (err, stack) {
-    print("Cannot get download folder path");
+    print("Cannot create folder");
   }
   return directory?.path;
 }
