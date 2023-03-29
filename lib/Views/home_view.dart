@@ -97,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   ? const SizedBox()
                   : Expanded(
                       child: ListView(
-                        physics: const NeverScrollableScrollPhysics(),
+                        // physics: const NeverScrollableScrollPhysics(),
                         children: <Widget>[
                           SizedBox(height: vGap),
                           Card(
@@ -163,197 +163,216 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                             ),
                           ),
                           SizedBox(height: vGap),
-                          Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text("Choose Format",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleMedium),
-                                      Text("some data would appear hear",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall),
-                                    ],
-                                  ),
-                                  ElevatedButton(
-                                      onPressed: () {
-                                        showMenu(
-                                          context: context,
-                                          position: const RelativeRect.fromLTRB(
-                                              100, 100, 100, 100),
-                                          items: [
-                                            PopupMenuItem(
-                                              value: "MP4",
-                                              onTap: () => setState(() {
-                                                format = "MP4";
-                                              }),
-                                              child: const Text("MP4"),
-                                            ),
-                                            PopupMenuItem(
-                                              value: "MP3",
-                                              onTap: () => setState(() {
-                                                format = "MP3";
-                                              }),
-                                              child: const Text("MP3"),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                      child: Text(format))
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: vGap),
-                          CardWithSideButtion(
-                            titleText: "Choose Quality",
-                            subtitleText: "some text goes here about ",
-                            btnText: "Choose",
-                            onPressed: () {
-                              showModalBottomSheet(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return SizedBox(
-                                      height: 300,
-                                      child: ListView.separated(
-                                        physics: const BouncingScrollPhysics(),
-                                        padding: const EdgeInsets.only(top: 10),
-                                        itemCount: manifest!.video.length,
-                                        separatorBuilder: ((context, index) =>
-                                            const Divider()),
-                                        itemBuilder: (context, index) =>
-                                            ListTile(
-                                          title: Text(manifest!
-                                              .video[index].qualityLabel),
-                                          leading: const Icon(
-                                              Icons.arrow_circle_down_outlined),
-                                          trailing: Text(
-                                            "${manifest!.video[index].size.totalMegaBytes.toStringAsFixed(2)} MB",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall,
-                                          ),
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                            setState(() {
-                                              quality = manifest!
-                                                  .video[index].qualityLabel;
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15)));
-                              // debugPrint("${manifest.videoOnly[5].fragments.isEmpty}");
-                              // downloader.downloadVideo(manifest.video[6],
-                              // videoTitle: video.title, channelTitle: channel.title);
-                              setState(() {
-                                isLoading = false;
-                              });
-                              // showMenu(
-                              //   context: context,
-                              //   position: const RelativeRect.fromLTRB(
-                              //       100, 100, 100, 100),
-                              //   items: List.generate(
-                              //     manifest!.streams.length,
-                              //     (index) => PopupMenuItem(
-                              //       child: Text(
-                              //           manifest!.streams[index].qualityLabel),
-                              //     ),
-                              //   ),
-                              // );
-                            },
-                          ),
-                          // PopupMenuButton(
-                          //   itemBuilder: (BuildContext context) =>
-                          //       <PopupMenuEntry<SampleItem>>[
-                          //     const PopupMenuItem<SampleItem>(
-                          //       value: SampleItem.itemOne,
-                          //       child: Text('Item 1'),
+                          // Card(
+                          //   child: Padding(
+                          //     padding: const EdgeInsets.all(20.0),
+                          //     child: Row(
+                          //       mainAxisAlignment:
+                          //           MainAxisAlignment.spaceBetween,
+                          //       children: [
+                          //         Column(
+                          //           crossAxisAlignment:
+                          //               CrossAxisAlignment.start,
+                          //           children: [
+                          //             Text("Choose Format",
+                          //                 style: Theme.of(context)
+                          //                     .textTheme
+                          //                     .titleMedium),
+                          //             Text("some data would appear hear",
+                          //                 style: Theme.of(context)
+                          //                     .textTheme
+                          //                     .bodySmall),
+                          //           ],
+                          //         ),
+                          //         ElevatedButton(
+                          //             onPressed: () {
+                          //               showMenu(
+                          //                 context: context,
+                          //                 position: const RelativeRect.fromLTRB(
+                          //                     100, 100, 100, 100),
+                          //                 items: [
+                          //                   PopupMenuItem(
+                          //                     value: "MP4",
+                          //                     onTap: () => setState(() {
+                          //                       format = "MP4";
+                          //                     }),
+                          //                     child: const Text("MP4"),
+                          //                   ),
+                          //                   PopupMenuItem(
+                          //                     value: "MP3",
+                          //                     onTap: () => setState(() {
+                          //                       format = "MP3";
+                          //                     }),
+                          //                     child: const Text("MP3"),
+                          //                   ),
+                          //                 ],
+                          //               );
+                          //             },
+                          //             child: Text(format))
+                          //       ],
                           //     ),
-                          //     const PopupMenuItem<SampleItem>(
-                          //       value: SampleItem.itemTwo,
-                          //       child: Text('Item 2'),
-                          //     ),
-                          //     const PopupMenuItem<SampleItem>(
-                          //       value: SampleItem.itemThree,
-                          //       child: Text('Item 3'),
-                          //     ),
-                          //   ],
+                          //   ),
                           // ),
-                          SizedBox(height: vGap),
-                          const SizedBox(height: 20),
+                          // SizedBox(height: vGap),
+                          // CardWithSideButtion(
+                          //   titleText: "Choose Quality",
+                          //   subtitleText: "some text goes here about ",
+                          //   btnText: "Choose",
+                          //   onPressed: () {
+                          //     showModalBottomSheet(
+                          //         context: context,
+                          //         builder: (BuildContext context) {
+                          //           return SizedBox(
+                          //             height: 300,
+                          //             child: ListView.separated(
+                          //               physics: const BouncingScrollPhysics(),
+                          //               padding: const EdgeInsets.only(top: 10),
+                          //               itemCount: manifest!.video.length,
+                          //               separatorBuilder: ((context, index) =>
+                          //                   const Divider()),
+                          //               itemBuilder: (context, index) =>
+                          //                   ListTile(
+                          //                 title: Text(manifest!
+                          //                     .video[index].qualityLabel),
+                          //                 leading: const Icon(
+                          //                     Icons.arrow_circle_down_outlined),
+                          //                 trailing: Text(
+                          //                   "${manifest!.video[index].size.totalMegaBytes.toStringAsFixed(2)} MB",
+                          //                   style: Theme.of(context)
+                          //                       .textTheme
+                          //                       .bodySmall,
+                          //                 ),
+                          //                 onTap: () {
+                          //                   Navigator.pop(context);
+                          //                   setState(() {
+                          //                     quality = manifest!
+                          //                         .video[index].qualityLabel;
+                          //                   });
+                          //                 },
+                          //               ),
+                          //             ),
+                          //           );
+                          //         },
+                          //         shape: RoundedRectangleBorder(
+                          //             borderRadius: BorderRadius.circular(15)));
+                          //     // debugPrint("${manifest.videoOnly[5].fragments.isEmpty}");
+                          //     // downloader.downloadVideo(manifest.video[6],
+                          //     // videoTitle: video.title, channelTitle: channel.title);
+                          //     setState(() {
+                          //       isLoading = false;
+                          //     });
+                          //     // showMenu(
+                          //     //   context: context,
+                          //     //   position: const RelativeRect.fromLTRB(
+                          //     //       100, 100, 100, 100),
+                          //     //   items: List.generate(
+                          //     //     manifest!.streams.length,
+                          //     //     (index) => PopupMenuItem(
+                          //     //       child: Text(
+                          //     //           manifest!.streams[index].qualityLabel),
+                          //     //     ),
+                          //     //   ),
+                          //     // );
+                          //   },
+                          // ),
+                          // // PopupMenuButton(
+                          // //   itemBuilder: (BuildContext context) =>
+                          // //       <PopupMenuEntry<SampleItem>>[
+                          // //     const PopupMenuItem<SampleItem>(
+                          // //       value: SampleItem.itemOne,
+                          // //       child: Text('Item 1'),
+                          // //     ),
+                          // //     const PopupMenuItem<SampleItem>(
+                          // //       value: SampleItem.itemTwo,
+                          // //       child: Text('Item 2'),
+                          // //     ),
+                          // //     const PopupMenuItem<SampleItem>(
+                          // //       value: SampleItem.itemThree,
+                          // //       child: Text('Item 3'),
+                          // //     ),
+                          // //   ],
+                          // // ),
+                          // SizedBox(height: vGap),
+                          // const SizedBox(height: 20),
+                          // Container(
+                          //   width: double.infinity,
+                          //   padding: const EdgeInsets.symmetric(horizontal: 10),
+                          //   child: const Text("Choose Audio"),
+                          // ),
+                          ExpansionTile(
+                            title: const Text("Choose Audio"),
+                            children: [
+                              Wrap(
+                                children: List.generate(
+                                    manifest!.audioOnly.length, (index) {
+                                  return Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 5),
+                                    child: ChoiceChip(
+                                      // selectedColor: Colors.blue[900],
+                                      label: Text(
+                                          "${manifest!.audioOnly[index].bitrate.kiloBitsPerSecond.ceil()}Kb/s | ${manifest!.audioOnly[index].size}"),
+                                      selected:
+                                          selectedIndex == index && isAudio,
+                                      onSelected: (selected) {
+                                        setState(() {
+                                          selectedIndex = index;
+                                          isAudio = true;
+                                        });
+                                      },
+                                    ),
+                                  );
+                                }),
+                              ),
+                            ],
+                          ),
+                          const Divider(),
+                          // Container(
+                          //   width: double.infinity,
+                          //   padding: const EdgeInsets.symmetric(horizontal: 10),
+                          //   child: const Text("Choose Video"),
+                          // ),
+                          ExpansionTile(
+                            title: const Text("Choose Video"),
+                            children: [
+                              Wrap(
+                                children: List.generate(manifest!.video.length,
+                                    (index) {
+                                  return Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 5),
+                                    child: ChoiceChip(
+                                      label: Text(
+                                          "${manifest!.video[index].qualityLabel} | ${manifest!.video[index].size}"),
+                                      selected:
+                                          selectedIndex == index && !isAudio,
+                                      onSelected: (selected) {
+                                        setState(() {
+                                          selectedIndex = index;
+                                          isAudio = false;
+                                        });
+                                      },
+                                    ),
+                                  );
+                                }),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: const Text("Choose Audio"),
-              ),
-              Wrap(
-                children: List.generate(10, (index) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 5),
-                    child: ChoiceChip(
-                      // selectedColor: Colors.blue[900],
-                      label: const Text("144p"),
-                      selected: selectedIndex == index && isAudio,
-                      onSelected: (selected) {
-                        setState(() {
-                          selectedIndex = index;
-                          isAudio = true;
-                        });
-                      },
-                    ),
-                  );
-                }),
-              ),
-              const Divider(),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: const Text("Choose Video"),
-              ),
-              Wrap(
-                children: List.generate(10, (index) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 5),
-                    child: ChoiceChip(
-                      label: const Text("144p"),
-                      selected: selectedIndex == index && !isAudio,
-                      onSelected: (selected) {
-                        setState(() {
-                          selectedIndex = index;
-                          isAudio = false;
-                        });
-                      },
-                    ),
-                  );
-                }),
-              ),
             ],
           ),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            if (format == "MP3") {
-              await Downloader().downloadVideo(manifest!.video[1]);
-              return;
-            } else if (format == "MP4") {
-              await Downloader().downloadVideo(manifest!.video[1]);
-              return;
+            if (isAudio) {
+              await Downloader()
+                  .downloadAudio(manifest!.audioOnly[selectedIndex]);
+            } else {
+              var selectedVideo = manifest!.video[selectedIndex];
+              await Downloader().downloadVideo(selectedVideo,
+                  videoTitle: video!.title, channelTitle: channel!.title);
             }
           },
           child: const Icon(Icons.download),
