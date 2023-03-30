@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ytd/views/widgets/custom_widgets.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
+import 'package:ytd/views/widgets/menu_button.dart';
 import '../util/downloader.dart';
 import '../views/downloads.dart';
+import '../views/settings_view.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class Home extends StatefulWidget {
+  const Home({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<Home> createState() => _HomeState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
+class _HomeState extends State<Home> with TickerProviderStateMixin {
   final _urlController = TextEditingController();
   double initialHeight = 0;
   double percentage = 0.0;
@@ -58,367 +60,301 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        body: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-          margin: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            children: [
-              SizedBox(
-                height: 50,
-                child: TextField(
-                  controller: _urlController,
-                  clipBehavior: Clip.antiAlias,
-                  autocorrect: false,
-                  onChanged: (value) async {
-                    hasData = await get(value);
-                    setState(() {});
-                  },
-                  decoration: InputDecoration(
-                    hintText: "Paste Url",
-                    suffixIcon: IconButton(
-                        onPressed: () async {
-                          var val =
-                              await Clipboard.getData(Clipboard.kTextPlain);
-                          if (val == null) return;
-                          _urlController.text = val.text!;
-                          setState(() {
-                            isLoading = true;
-                          });
-                          hasData = await get(_urlController.text);
-                          setState(() {
-                            isLoading = false;
-                          });
-                        },
-                        icon: const Icon(Icons.paste_rounded)),
-                    prefixIcon: const Icon(Icons.link),
-                  ),
-                ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          SizedBox(
+            height: 50,
+            child: TextField(
+              controller: _urlController,
+              clipBehavior: Clip.antiAlias,
+              autocorrect: false,
+              onChanged: (value) async {
+                hasData = await get(value);
+                setState(() {});
+              },
+              decoration: InputDecoration(
+                hintText: "Paste Url",
+                suffixIcon: IconButton(
+                    onPressed: () async {
+                      var val = await Clipboard.getData(Clipboard.kTextPlain);
+                      if (val == null) return;
+                      _urlController.text = val.text!;
+                      setState(() {
+                        isLoading = true;
+                      });
+                      hasData = await get(_urlController.text);
+                      setState(() {
+                        isLoading = false;
+                      });
+                    },
+                    icon: const Icon(Icons.paste_rounded)),
+                prefixIcon: const Icon(Icons.link),
               ),
-              isLoading
-                  ? const Expanded(
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    )
-                  : const SizedBox(),
-              !hasData
-                  ? const SizedBox()
-                  : Expanded(
-                      child: ListView(
-                        // physics: const NeverScrollableScrollPhysics(),
-                        children: <Widget>[
-                          SizedBox(height: vGap),
-                          Card(
-                            child: ListView(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              padding: const EdgeInsets.all(10),
-                              children: <Widget>[
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      width: 130,
-                                      height: 130,
-                                      child: Card(
-                                        color: Colors.black,
-                                        child: Image.network(
-                                            video!.thumbnails.mediumResUrl),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(15.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(
-                                            width: 160,
-                                            child: Text(
-                                              video!.title,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .titleMedium,
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Text("channel: ${channel!.title}",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall),
-                                          const SizedBox(height: 10),
-                                          Text(
-                                              "Duration: ${video!.duration!.inMinutes} mins",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall),
-                                        ],
-                                      ),
-                                    )
-                                  ],
+            ),
+          ),
+          isLoading
+              ? const Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+              : const SizedBox(),
+          !hasData
+              ? const SizedBox()
+              : Expanded(
+                  child: ListView(
+                    // physics: const NeverScrollableScrollPhysics(),
+                    children: <Widget>[
+                      SizedBox(height: vGap),
+                      Card(
+                        child: ListView(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          padding: const EdgeInsets.all(10),
+                          children: <Widget>[
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 130,
+                                  height: 130,
+                                  child: Card(
+                                    color: Colors.black,
+                                    child: Image.network(
+                                        video!.thumbnails.mediumResUrl),
+                                  ),
                                 ),
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Text(
-                                      "Description: ${video!.engagement}",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall),
+                                Padding(
+                                  padding: const EdgeInsets.all(15.0),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        width: 160,
+                                        child: Text(
+                                          video!.title,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Text("channel: ${channel!.title}",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall),
+                                      const SizedBox(height: 10),
+                                      Text(
+                                          "Duration: ${video!.duration!.inMinutes} mins",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall),
+                                    ],
+                                  ),
                                 )
                               ],
                             ),
-                          ),
-                          SizedBox(height: vGap),
-                          // Card(
-                          //   child: Padding(
-                          //     padding: const EdgeInsets.all(20.0),
-                          //     child: Row(
-                          //       mainAxisAlignment:
-                          //           MainAxisAlignment.spaceBetween,
-                          //       children: [
-                          //         Column(
-                          //           crossAxisAlignment:
-                          //               CrossAxisAlignment.start,
-                          //           children: [
-                          //             Text("Choose Format",
-                          //                 style: Theme.of(context)
-                          //                     .textTheme
-                          //                     .titleMedium),
-                          //             Text("some data would appear hear",
-                          //                 style: Theme.of(context)
-                          //                     .textTheme
-                          //                     .bodySmall),
-                          //           ],
-                          //         ),
-                          //         ElevatedButton(
-                          //             onPressed: () {
-                          //               showMenu(
-                          //                 context: context,
-                          //                 position: const RelativeRect.fromLTRB(
-                          //                     100, 100, 100, 100),
-                          //                 items: [
-                          //                   PopupMenuItem(
-                          //                     value: "MP4",
-                          //                     onTap: () => setState(() {
-                          //                       format = "MP4";
-                          //                     }),
-                          //                     child: const Text("MP4"),
-                          //                   ),
-                          //                   PopupMenuItem(
-                          //                     value: "MP3",
-                          //                     onTap: () => setState(() {
-                          //                       format = "MP3";
-                          //                     }),
-                          //                     child: const Text("MP3"),
-                          //                   ),
-                          //                 ],
-                          //               );
-                          //             },
-                          //             child: Text(format))
-                          //       ],
-                          //     ),
-                          //   ),
-                          // ),
-                          // SizedBox(height: vGap),
-                          // CardWithSideButtion(
-                          //   titleText: "Choose Quality",
-                          //   subtitleText: "some text goes here about ",
-                          //   btnText: "Choose",
-                          //   onPressed: () {
-                          //     showModalBottomSheet(
-                          //         context: context,
-                          //         builder: (BuildContext context) {
-                          //           return SizedBox(
-                          //             height: 300,
-                          //             child: ListView.separated(
-                          //               physics: const BouncingScrollPhysics(),
-                          //               padding: const EdgeInsets.only(top: 10),
-                          //               itemCount: manifest!.video.length,
-                          //               separatorBuilder: ((context, index) =>
-                          //                   const Divider()),
-                          //               itemBuilder: (context, index) =>
-                          //                   ListTile(
-                          //                 title: Text(manifest!
-                          //                     .video[index].qualityLabel),
-                          //                 leading: const Icon(
-                          //                     Icons.arrow_circle_down_outlined),
-                          //                 trailing: Text(
-                          //                   "${manifest!.video[index].size.totalMegaBytes.toStringAsFixed(2)} MB",
-                          //                   style: Theme.of(context)
-                          //                       .textTheme
-                          //                       .bodySmall,
-                          //                 ),
-                          //                 onTap: () {
-                          //                   Navigator.pop(context);
-                          //                   setState(() {
-                          //                     quality = manifest!
-                          //                         .video[index].qualityLabel;
-                          //                   });
-                          //                 },
-                          //               ),
-                          //             ),
-                          //           );
-                          //         },
-                          //         shape: RoundedRectangleBorder(
-                          //             borderRadius: BorderRadius.circular(15)));
-                          //     // debugPrint("${manifest.videoOnly[5].fragments.isEmpty}");
-                          //     // downloader.downloadVideo(manifest.video[6],
-                          //     // videoTitle: video.title, channelTitle: channel.title);
-                          //     setState(() {
-                          //       isLoading = false;
-                          //     });
-                          //     // showMenu(
-                          //     //   context: context,
-                          //     //   position: const RelativeRect.fromLTRB(
-                          //     //       100, 100, 100, 100),
-                          //     //   items: List.generate(
-                          //     //     manifest!.streams.length,
-                          //     //     (index) => PopupMenuItem(
-                          //     //       child: Text(
-                          //     //           manifest!.streams[index].qualityLabel),
-                          //     //     ),
-                          //     //   ),
-                          //     // );
-                          //   },
-                          // ),
-                          // // PopupMenuButton(
-                          // //   itemBuilder: (BuildContext context) =>
-                          // //       <PopupMenuEntry<SampleItem>>[
-                          // //     const PopupMenuItem<SampleItem>(
-                          // //       value: SampleItem.itemOne,
-                          // //       child: Text('Item 1'),
-                          // //     ),
-                          // //     const PopupMenuItem<SampleItem>(
-                          // //       value: SampleItem.itemTwo,
-                          // //       child: Text('Item 2'),
-                          // //     ),
-                          // //     const PopupMenuItem<SampleItem>(
-                          // //       value: SampleItem.itemThree,
-                          // //       child: Text('Item 3'),
-                          // //     ),
-                          // //   ],
-                          // // ),
-                          // SizedBox(height: vGap),
-                          // const SizedBox(height: 20),
-                          // Container(
-                          //   width: double.infinity,
-                          //   padding: const EdgeInsets.symmetric(horizontal: 10),
-                          //   child: const Text("Choose Audio"),
-                          // ),
-                          ExpansionTile(
-                            title: const Text("Choose Audio"),
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              child: Text("Description: ${video!.engagement}",
+                                  style: Theme.of(context).textTheme.bodySmall),
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: vGap),
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Wrap(
-                                children: List.generate(
-                                    manifest!.audioOnly.length, (index) {
-                                  return Container(
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 5),
-                                    child: ChoiceChip(
-                                      // selectedColor: Colors.blue[900],
-                                      label: Text(
-                                          "${manifest!.audioOnly[index].bitrate.kiloBitsPerSecond.ceil()}Kb/s | ${manifest!.audioOnly[index].size}"),
-                                      selected:
-                                          selectedIndex == index && isAudio,
-                                      onSelected: (selected) {
-                                        setState(() {
-                                          selectedIndex = index;
-                                          isAudio = true;
-                                        });
-                                      },
-                                    ),
-                                  );
-                                }),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Choose Format",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium),
+                                  Text("some data would appear hear",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall),
+                                ],
                               ),
+                              PopupMenuButton(itemBuilder: (context) {
+                                return [
+                                  const PopupMenuItem(
+                                    value: 0,
+                                    child: Text("Audio"),
+                                  ),
+                                  const PopupMenuItem(
+                                    value: 1,
+                                    child: Text("Video"),
+                                  ),
+                                ];
+                              }, onSelected: (value) {
+                                setState(() {
+                                  value == 0 ? isAudio = true : isAudio = false;
+                                });
+                              })
                             ],
                           ),
-                          const Divider(),
-                          // Container(
-                          //   width: double.infinity,
-                          //   padding: const EdgeInsets.symmetric(horizontal: 10),
-                          //   child: const Text("Choose Video"),
-                          // ),
-                          ExpansionTile(
-                            title: const Text("Choose Video"),
-                            children: [
-                              Wrap(
-                                children: List.generate(manifest!.video.length,
-                                    (index) {
-                                  return Container(
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 5),
-                                    child: ChoiceChip(
-                                      label: Text(
-                                          "${manifest!.video[index].qualityLabel} | ${manifest!.video[index].size}"),
-                                      selected:
-                                          selectedIndex == index && !isAudio,
-                                      onSelected: (selected) {
-                                        setState(() {
-                                          selectedIndex = index;
-                                          isAudio = false;
-                                        });
-                                      },
-                                    ),
-                                  );
-                                }),
-                              ),
-                            ],
+                        ),
+                      ),
+                      // SizedBox(height: vGap),
+                      // CardWithSideButtion(
+                      //   titleText: "Choose Quality",
+                      //   subtitleText: "some text goes here about ",
+                      //   btnText: "Choose",
+                      //   onPressed: () {
+                      //     showModalBottomSheet(
+                      //         context: context,
+                      //         builder: (BuildContext context) {
+                      //           return SizedBox(
+                      //             height: 300,
+                      //             child: ListView.separated(
+                      //               physics: const BouncingScrollPhysics(),
+                      //               padding: const EdgeInsets.only(top: 10),
+                      //               itemCount: manifest!.video.length,
+                      //               separatorBuilder: ((context, index) =>
+                      //                   const Divider()),
+                      //               itemBuilder: (context, index) =>
+                      //                   ListTile(
+                      //                 title: Text(manifest!
+                      //                     .video[index].qualityLabel),
+                      //                 leading: const Icon(
+                      //                     Icons.arrow_circle_down_outlined),
+                      //                 trailing: Text(
+                      //                   "${manifest!.video[index].size.totalMegaBytes.toStringAsFixed(2)} MB",
+                      //                   style: Theme.of(context)
+                      //                       .textTheme
+                      //                       .bodySmall,
+                      //                 ),
+                      //                 onTap: () {
+                      //                   Navigator.pop(context);
+                      //                   setState(() {
+                      //                     quality = manifest!
+                      //                         .video[index].qualityLabel;
+                      //                   });
+                      //                 },
+                      //               ),
+                      //             ),
+                      //           );
+                      //         },
+                      //         shape: RoundedRectangleBorder(
+                      //             borderRadius: BorderRadius.circular(15)));
+                      //     // debugPrint("${manifest.videoOnly[5].fragments.isEmpty}");
+                      //     // downloader.downloadVideo(manifest.video[6],
+                      //     // videoTitle: video.title, channelTitle: channel.title);
+                      //     setState(() {
+                      //       isLoading = false;
+                      //     });
+                      //     // showMenu(
+                      //     //   context: context,
+                      //     //   position: const RelativeRect.fromLTRB(
+                      //     //       100, 100, 100, 100),
+                      //     //   items: List.generate(
+                      //     //     manifest!.streams.length,
+                      //     //     (index) => PopupMenuItem(
+                      //     //       child: Text(
+                      //     //           manifest!.streams[index].qualityLabel),
+                      //     //     ),
+                      //     //   ),
+                      //     // );
+                      //   },
+                      // ),
+                      // // PopupMenuButton(
+                      // //   itemBuilder: (BuildContext context) =>
+                      // //       <PopupMenuEntry<SampleItem>>[
+                      // //     const PopupMenuItem<SampleItem>(
+                      // //       value: SampleItem.itemOne,
+                      // //       child: Text('Item 1'),
+                      // //     ),
+                      // //     const PopupMenuItem<SampleItem>(
+                      // //       value: SampleItem.itemTwo,
+                      // //       child: Text('Item 2'),
+                      // //     ),
+                      // //     const PopupMenuItem<SampleItem>(
+                      // //       value: SampleItem.itemThree,
+                      // //       child: Text('Item 3'),
+                      // //     ),
+                      // //   ],
+                      // // ),
+                      // SizedBox(height: vGap),
+                      // const SizedBox(height: 20),
+                      // Container(
+                      //   width: double.infinity,
+                      //   padding: const EdgeInsets.symmetric(horizontal: 10),
+                      //   child: const Text("Choose Audio"),
+                      // ),
+                      const SizedBox(height: 10),
+                      ExpansionTile(
+                        title: const Text("Choose Quality"),
+                        children: [
+                          Wrap(
+                            children: List.generate(
+                                isAudio
+                                    ? manifest!.audioOnly.length
+                                    : manifest!.video.length, (index) {
+                              return Container(
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 5),
+                                child: ChoiceChip(
+                                  // selectedColor: Colors.blue[900],
+                                  label: Text(isAudio
+                                      ? "${manifest!.audioOnly[index].bitrate.kiloBitsPerSecond.ceil()}Kb/s | ${manifest!.audioOnly[index].size}"
+                                      : "${manifest!.video[index].qualityLabel} | ${manifest!.video[index].size}"),
+                                  selected: selectedIndex == index && isAudio,
+                                  onSelected: (selected) {
+                                    setState(() {
+                                      selectedIndex = index;
+                                      // isAudio = true;
+                                    });
+                                  },
+                                ),
+                              );
+                            }),
                           ),
                         ],
-                      ),
-                    ),
-            ],
-          ),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-            currentIndex: tabIndex,
-            onTap: (index) {
-              setState(() {
-                tabIndex = index;
-              });
-
-              if (index == 1) {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const Downloads()));
-              }
-            },
-            items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.download), label: "Downloads"),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.settings), label: "Settings"),
-            ]),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            if (isAudio) {
-              await Downloader()
-                  .downloadAudio(manifest!.audioOnly[selectedIndex]);
-            } else {
-              var selectedVideo = manifest!.video[selectedIndex];
-              downloader.downloadVideo(selectedVideo,
-                  videoTitle: video!.title, channelTitle: channel!.title);
-              downloader.progressStream.listen((event) {
-                // showDialog(
-                //     context: context,
-                //     builder: (builder) => AlertDialog(
-                //           title: Text("Downloading $event"),
-                //           // content: const Text("Downloaded Successfully"),
-                //         ));
-                debugPrint("Downloaded: $event");
-              });
-            }
-          },
-          child: const Icon(Icons.download),
-        ),
-        // This trailing comma makes auto-formatting nicer for build methods.
+                      )
+                    ],
+                  ),
+                ),
+        ],
       ),
     );
   }
 }
 
 enum SampleItem { itemOne, itemTwo, itemThree }
+
+
+// floatingActionButton: FloatingActionButton(
+//           onPressed: () async {
+//             if (isAudio) {
+//               await Downloader()
+//                   .downloadAudio(manifest!.audioOnly[selectedIndex]);
+//             } else {
+//               var selectedVideo = manifest!.video[selectedIndex];
+//               downloader.downloadVideo(selectedVideo,
+//                   videoTitle: video!.title, channelTitle: channel!.title);
+//               downloader.progressStream.listen((event) {
+//                 // showDialog(
+//                 //     context: context,
+//                 //     builder: (builder) => AlertDialog(
+//                 //           title: Text("Downloading $event"),
+//                 //           // content: const Text("Downloaded Successfully"),
+//                 //         ));
+//                 debugPrint("Downloaded: $event");
+//               });
+//             }
+//           },
+//           child: const Icon(Icons.download),
+//         ),

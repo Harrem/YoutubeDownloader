@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       title: 'HTube Dl',
       theme: CustomTheme().dark,
       debugShowCheckedModeBanner: false,
-      initialRoute: RouteGenerator.home,
+      initialRoute: RouteGenerator.main,
       onGenerateRoute: (settings) => RouteGenerator.generateRoute(settings),
     );
   }
