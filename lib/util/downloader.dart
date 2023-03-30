@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import 'package:flutter/foundation.dart';
 import 'file_ops.dart';
@@ -5,7 +7,8 @@ import 'dart:io';
 
 class Downloader {
   var ytExplode = YoutubeExplode();
-
+  StreamController<double> _downloadProgress =
+      StreamController<double>.broadcast();
   Future<Video> getVideoInfo(String videoId) async {
     var video = await ytExplode.videos.get(videoId);
     return video;
@@ -34,9 +37,9 @@ class Downloader {
         fileName: "${videoTitle ?? video.tag}",
         dirName: channelTitle ?? "Unknown");
 
-    if (file == null) return Future.error("Process Canceled");
+    if (file == null) Stream.error("Process Canceled");
 
-    final sink = file.openWrite();
+    final sink = file!.openWrite();
 
     debugPrint("video: ${video.url}");
     debugPrint("requesting vido stream");
@@ -49,19 +52,35 @@ class Downloader {
 
     var total = response.contentLength;
     var received = 0;
+    var percentage = 0.0;
+    response.listen(
+      (data) {
+        received += data.length;
+        sink.add(data);
+        final percentage = ((received / total) * 100);
+        _downloadProgress.add(percentage);
+        // final percentageText = ((received / total) * 100).toStringAsFixed(0);
+        // debugPrint('Download progress: $percentageText%');
+      },
+      onDone: () async {
+        debugPrint("Video Downloaded Successfully");
+        _downloadProgress.close();
+        await sink.flush();
+        sink.close();
+      },
+    );
 
-    await for (var data in response) {
-      received += data.length;
-      final percentage = ((received / total) * 100).toStringAsFixed(0);
-      print('Download progress: $percentage%');
-      sink.add(data);
-    }
-
-    await sink.flush();
-    sink.close();
-
-    debugPrint("Video Downloaded Successfully");
+    // await for (var data in response) {
+    //   received += data.length;
+    //   final percentage = ((received / total) * 100).toStringAsFixed(0);
+    //   debugPrint('Download progress: $percentage%');
+    //   percentage;
+    //   sink.add(data);
+    //   return percentage;
+    // }
   }
+
+  Stream<double> get progressStream => _downloadProgress.stream;
 
   Future<void> downloadAudio(AudioStreamInfo audio,
       {String? videoTitle, String? channelTitle}) async {
