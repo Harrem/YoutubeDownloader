@@ -10,9 +10,9 @@ class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case main:
-        return MaterialPageRoute(builder: (_) => MainView());
+        return MaterialPageRoute(builder: (_) => const MainView());
       default:
-        return MaterialPageRoute(builder: (_) => MainView());
+        return MaterialPageRoute(builder: (_) => const MainView());
     }
   }
 }

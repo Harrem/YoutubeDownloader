@@ -5,7 +5,7 @@ import 'home_view.dart';
 import 'settings_view.dart';
 
 class MainView extends StatefulWidget {
-  MainView({super.key});
+  const MainView({super.key});
 
   @override
   State<MainView> createState() => _MainViewState();
