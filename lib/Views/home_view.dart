@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:ytd/views/widgets/custom_widgets.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import '../util/downloader.dart';
+import '../views/downloads.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -25,11 +26,20 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   String quality = "Quality";
   bool isAudio = true;
   int selectedIndex = 0;
+  int tabIndex = 0;
   int qIndex = 0;
   bool hasData = false;
+  Downloader downloader = Downloader();
+
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    downloader.progressStream.drain();
+    super.dispose();
   }
 
   Future<bool> get(String vidId) async {
@@ -364,6 +374,25 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             ],
           ),
         ),
+        bottomNavigationBar: BottomNavigationBar(
+            currentIndex: tabIndex,
+            onTap: (index) {
+              setState(() {
+                tabIndex = index;
+              });
+
+              if (index == 1) {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => const Downloads()));
+              }
+            },
+            items: const [
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.download), label: "Downloads"),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.settings), label: "Settings"),
+            ]),
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
             if (isAudio) {
@@ -371,8 +400,17 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                   .downloadAudio(manifest!.audioOnly[selectedIndex]);
             } else {
               var selectedVideo = manifest!.video[selectedIndex];
-              await Downloader().downloadVideo(selectedVideo,
+              downloader.downloadVideo(selectedVideo,
                   videoTitle: video!.title, channelTitle: channel!.title);
+              downloader.progressStream.listen((event) {
+                // showDialog(
+                //     context: context,
+                //     builder: (builder) => AlertDialog(
+                //           title: Text("Downloading $event"),
+                //           // content: const Text("Downloaded Successfully"),
+                //         ));
+                debugPrint("Downloaded: $event");
+              });
             }
           },
           child: const Icon(Icons.download),
