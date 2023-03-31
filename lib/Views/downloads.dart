@@ -14,6 +14,10 @@ class _DownloadsState extends State<Downloads> {
     setState(() {});
   }
 
+  void updateProgress(String id, DownloadTaskStatus status, int progress) {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,6 +53,7 @@ class _DownloadsState extends State<Downloads> {
                   fileName: snapshot.data![index].filename!,
                   taskId: snapshot.data![index].taskId,
                   status: snapshot.data![index].status,
+                  progress: snapshot.data![index].progress,
                   updatestate: updatestate,
                 ),
               );
@@ -66,6 +71,7 @@ class DownloadProgressWidget extends StatefulWidget {
   final String? image;
   final String taskId;
   final DownloadTaskStatus status;
+  final int progress;
   final Function updatestate;
 
   const DownloadProgressWidget({
@@ -74,6 +80,7 @@ class DownloadProgressWidget extends StatefulWidget {
     required this.fileName,
     required this.taskId,
     required this.status,
+    required this.progress,
     required this.updatestate,
     this.image,
   });
@@ -83,7 +90,6 @@ class DownloadProgressWidget extends StatefulWidget {
 }
 
 class _DownloadProgressWidgetState extends State<DownloadProgressWidget> {
-  double _progress = 0;
   bool popup = false;
   @override
   void initState() {
@@ -139,7 +145,7 @@ class _DownloadProgressWidgetState extends State<DownloadProgressWidget> {
         const SizedBox(height: 20.0),
         if (widget.status != DownloadTaskStatus.complete)
           Text(
-            'Download progress: $_progress%',
+            'Download progress: ${widget.progress}%',
             style: const TextStyle(fontSize: 12.0, color: Colors.grey),
           ),
         if (widget.status == DownloadTaskStatus.complete)
@@ -157,8 +163,10 @@ class _DownloadProgressWidgetState extends State<DownloadProgressWidget> {
                 onPressed: () async {
                   if (widget.status == DownloadTaskStatus.running) {
                     await FlutterDownloader.pause(taskId: widget.taskId);
+                    setState(() {});
                   } else if (widget.status == DownloadTaskStatus.paused) {
                     await FlutterDownloader.resume(taskId: widget.taskId);
+                    setState(() {});
                   }
                 },
                 child: Text(
@@ -207,9 +215,9 @@ class _DownloadProgressWidgetState extends State<DownloadProgressWidget> {
             }),
           ],
         ),
-        if (widget.status != DownloadTaskStatus.complete)
+        if (widget.status == DownloadTaskStatus.running)
           LinearProgressIndicator(
-            value: _progress / 100,
+            value: widget.progress / 100,
             backgroundColor: Colors.grey,
             valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
           ),

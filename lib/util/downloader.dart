@@ -1,12 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:isolate';
 import 'dart:ui';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import 'package:flutter/foundation.dart';
-import 'package:ytd/util/permissions.dart';
-import '../models/downloaded_files.dart';
 import 'package:flutter_downloader/flutter_downloader.dart' as dl;
 import 'file_ops.dart';
 import 'dart:io';
