@@ -1,17 +1,13 @@
-import 'dart:async';
-import 'dart:io';
-import 'package:shared_preferences/shared_preferences.dart';
-
 class DownloadedFile {
   String url;
-  String fileName;
+  String title;
   String savePath;
   bool isDownloaded;
   double progress;
 
   DownloadedFile({
     required this.url,
-    required this.fileName,
+    required this.title,
     required this.savePath,
     required this.isDownloaded,
     required this.progress,
@@ -19,7 +15,7 @@ class DownloadedFile {
 
   DownloadedFile.fromJson(Map<String, dynamic> json)
       : url = json['url'],
-        fileName = json['fileName'],
+        title = json['fileName'],
         savePath = json['savePath'],
         isDownloaded = json['isDownloaded'],
         progress = json['progress'];
@@ -27,7 +23,7 @@ class DownloadedFile {
   Map<String, dynamic> toJson() => {
         'url': url,
         'savePath': savePath,
-        'fileName': fileName,
+        'fileName': title,
         'isDownloaded': isDownloaded,
         'progress': progress,
       };
