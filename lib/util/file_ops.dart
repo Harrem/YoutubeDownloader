@@ -13,6 +13,7 @@ Future<File?> createFile(
 }
 
 Future<Directory> createDirectory(String dirName, String? dirPath) async {
+  requestStoragePermission();
   // final directory = await getExternalStorageDirectory();
 
   // Create the directory in the desired path
@@ -38,4 +39,14 @@ Future<String?> getDownloadPath() async {
     print("Cannot create folder");
   }
   return directory?.path;
+}
+
+Future<bool> deleteFile(String fileName) async {
+  final directory = Directory('emulated/0/ytd');
+  final file = File('${directory.path}/$fileName.mp4');
+  if (await file.exists()) {
+    await file.delete();
+    return true;
+  }
+  return false;
 }
