@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:ytd/views/widgets/custom_widgets.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
-import 'package:ytd/views/widgets/menu_button.dart';
 import '../util/downloader.dart';
-import '../views/downloads.dart';
-import '../views/settings_view.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -66,10 +62,10 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       child: Column(
         children: [
           SizedBox(
-            height: 50,
+            // height: 50,
             child: TextField(
               controller: _urlController,
-              clipBehavior: Clip.antiAlias,
+              // clipBehavior: Clip.antiAlias,
               autocorrect: false,
               onChanged: (value) async {
                 hasData = await get(value);
@@ -208,93 +204,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                           ),
                         ),
                       ),
-                      // SizedBox(height: vGap),
-                      // CardWithSideButtion(
-                      //   titleText: "Choose Quality",
-                      //   subtitleText: "some text goes here about ",
-                      //   btnText: "Choose",
-                      //   onPressed: () {
-                      //     showModalBottomSheet(
-                      //         context: context,
-                      //         builder: (BuildContext context) {
-                      //           return SizedBox(
-                      //             height: 300,
-                      //             child: ListView.separated(
-                      //               physics: const BouncingScrollPhysics(),
-                      //               padding: const EdgeInsets.only(top: 10),
-                      //               itemCount: manifest!.video.length,
-                      //               separatorBuilder: ((context, index) =>
-                      //                   const Divider()),
-                      //               itemBuilder: (context, index) =>
-                      //                   ListTile(
-                      //                 title: Text(manifest!
-                      //                     .video[index].qualityLabel),
-                      //                 leading: const Icon(
-                      //                     Icons.arrow_circle_down_outlined),
-                      //                 trailing: Text(
-                      //                   "${manifest!.video[index].size.totalMegaBytes.toStringAsFixed(2)} MB",
-                      //                   style: Theme.of(context)
-                      //                       .textTheme
-                      //                       .bodySmall,
-                      //                 ),
-                      //                 onTap: () {
-                      //                   Navigator.pop(context);
-                      //                   setState(() {
-                      //                     quality = manifest!
-                      //                         .video[index].qualityLabel;
-                      //                   });
-                      //                 },
-                      //               ),
-                      //             ),
-                      //           );
-                      //         },
-                      //         shape: RoundedRectangleBorder(
-                      //             borderRadius: BorderRadius.circular(15)));
-                      //     // debugPrint("${manifest.videoOnly[5].fragments.isEmpty}");
-                      //     // downloader.downloadVideo(manifest.video[6],
-                      //     // videoTitle: video.title, channelTitle: channel.title);
-                      //     setState(() {
-                      //       isLoading = false;
-                      //     });
-                      //     // showMenu(
-                      //     //   context: context,
-                      //     //   position: const RelativeRect.fromLTRB(
-                      //     //       100, 100, 100, 100),
-                      //     //   items: List.generate(
-                      //     //     manifest!.streams.length,
-                      //     //     (index) => PopupMenuItem(
-                      //     //       child: Text(
-                      //     //           manifest!.streams[index].qualityLabel),
-                      //     //     ),
-                      //     //   ),
-                      //     // );
-                      //   },
-                      // ),
-                      // // PopupMenuButton(
-                      // //   itemBuilder: (BuildContext context) =>
-                      // //       <PopupMenuEntry<SampleItem>>[
-                      // //     const PopupMenuItem<SampleItem>(
-                      // //       value: SampleItem.itemOne,
-                      // //       child: Text('Item 1'),
-                      // //     ),
-                      // //     const PopupMenuItem<SampleItem>(
-                      // //       value: SampleItem.itemTwo,
-                      // //       child: Text('Item 2'),
-                      // //     ),
-                      // //     const PopupMenuItem<SampleItem>(
-                      // //       value: SampleItem.itemThree,
-                      // //       child: Text('Item 3'),
-                      // //     ),
-                      // //   ],
-                      // // ),
-                      // SizedBox(height: vGap),
-                      // const SizedBox(height: 20),
-                      // Container(
-                      //   width: double.infinity,
-                      //   padding: const EdgeInsets.symmetric(horizontal: 10),
-                      //   child: const Text("Choose Audio"),
-                      // ),
-                      const SizedBox(height: 10),
+                      SizedBox(height: vGap),
                       ExpansionTile(
                         title: const Text("Choose Quality"),
                         children: [
@@ -311,7 +221,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                   label: Text(isAudio
                                       ? "${manifest!.audioOnly[index].bitrate.kiloBitsPerSecond.ceil()}Kb/s | ${manifest!.audioOnly[index].size}"
                                       : "${manifest!.video[index].qualityLabel} | ${manifest!.video[index].size}"),
-                                  selected: selectedIndex == index && isAudio,
+                                  selected: selectedIndex == index,
                                   onSelected: (selected) {
                                     setState(() {
                                       selectedIndex = index;
@@ -323,7 +233,15 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                             }),
                           ),
                         ],
-                      )
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          downloader.downloadVideo(
+                              manifest!.video[selectedIndex],
+                              videoTitle: video!.title);
+                        },
+                        child: const Text("Download"),
+                      ),
                     ],
                   ),
                 ),
