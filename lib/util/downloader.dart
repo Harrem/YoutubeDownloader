@@ -9,11 +9,8 @@ import 'dart:io';
 
 class Downloader {
   var ytExplode = YoutubeExplode();
-  final StreamController<double> _downloadProgress =
+  final StreamController<double> _downloaderStream =
       StreamController<double>.broadcast();
-  bool _isPaused = false;
-  double _pausedProgress = 0.0;
-  late String _pausedSavePath;
 
   Future<Video> getVideoInfo(String videoId) async {
     var video = await ytExplode.videos.get(videoId);
@@ -27,10 +24,10 @@ class Downloader {
 
   Future<StreamManifest> getVideoManifest(String videoId) async {
     var stream = await ytExplode.videos.streamsClient.getManifest(videoId);
-    stream.video.forEach((element) {
+    for (var element in stream.video) {
       debugPrint(
           "Resolution: ${element.videoResolution}, Quality: ${element.qualityLabel}, Size: ${element.size}");
-    });
+    }
     return stream;
   }
 
@@ -46,10 +43,6 @@ class Downloader {
 
   static void downloadCallback(
       String id, dl.DownloadTaskStatus status, int progress) {
-    // if (debug) {
-    print(
-        'Background Isolate Callback: task ($id) is in status ($status) and process ($progress)');
-    // }
     final SendPort send =
         IsolateNameServer.lookupPortByName('downloader_send_port')!;
     send.send([id, status, progress]);
@@ -107,7 +100,7 @@ class Downloader {
     // );
   }
 
-  Stream<double> get progressStream => _downloadProgress.stream;
+  Stream<double> get progressStream => _downloaderStream.stream;
 
   Future<void> downloadAudio(AudioStreamInfo audio,
       {String? videoTitle, String? channelTitle}) async {

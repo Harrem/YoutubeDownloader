@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:ytd/util/file_ops.dart';
 import '../util/downloader.dart';
 
 class Home extends StatefulWidget {
@@ -18,6 +22,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   double vGap = 10.0;
   bool animate = false;
   Video? video;
+  List<VideoStreamInfo?> streams = [];
   Channel? channel;
   StreamManifest? manifest;
   String format = "Format";
@@ -46,6 +51,12 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       video = await downloader.getVideoInfo(vidId);
       channel = await downloader.getChannelInfo(video!.channelId.value);
       manifest = await downloader.getVideoManifest(vidId);
+      streams = manifest!.video
+          .where((e) =>
+              e.container.name == 'mp4' && e.runtimeType == VideoOnlyStreamInfo)
+          .toList();
+      debugPrint(streams.toString());
+
       // debugPrint(manifest!.audioOnly[2].toJson().toString());
     } catch (e) {
       debugPrint(e.toString());
@@ -212,7 +223,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                             children: List.generate(
                                 isAudio
                                     ? manifest!.audioOnly.length
-                                    : manifest!.video.length, (index) {
+                                    : streams.length, (index) {
                               return Container(
                                 margin:
                                     const EdgeInsets.symmetric(horizontal: 5),
@@ -220,7 +231,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                   // selectedColor: Colors.blue[900],
                                   label: Text(isAudio
                                       ? "${manifest!.audioOnly[index].bitrate.kiloBitsPerSecond.ceil()}Kb/s | ${manifest!.audioOnly[index].size}"
-                                      : "${manifest!.video[index].qualityLabel} | ${manifest!.video[index].size}"),
+                                      : "${streams[index]!.qualityLabel} | ${manifest!.video[index].size}"),
                                   selected: selectedIndex == index,
                                   onSelected: (selected) {
                                     setState(() {
@@ -235,10 +246,13 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                         ],
                       ),
                       ElevatedButton(
-                        onPressed: () {
-                          downloader.downloadVideo(
+                        onPressed: () async {
+                          // var dir = await getLibraryDirectory();
+                          // debugPrint(dir.path);
+                          await downloader.downloadVideo(
                               manifest!.video[selectedIndex],
                               videoTitle: video!.title);
+                          setState(() {});
                         },
                         child: const Text("Download"),
                       ),

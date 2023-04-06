@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:ytd/util/file_ops.dart';
 
 class Downloads extends StatefulWidget {
   const Downloads({super.key});
@@ -11,10 +10,6 @@ class Downloads extends StatefulWidget {
 
 class _DownloadsState extends State<Downloads> {
   void updatestate() {
-    setState(() {});
-  }
-
-  void updateProgress(String id, DownloadTaskStatus status, int progress) {
     setState(() {});
   }
 
@@ -61,6 +56,10 @@ class _DownloadsState extends State<Downloads> {
           );
         },
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
@@ -90,11 +89,28 @@ class DownloadProgressWidget extends StatefulWidget {
 }
 
 class _DownloadProgressWidgetState extends State<DownloadProgressWidget> {
-  bool popup = false;
+  Future<void> refresh() async {
+    await Future.doWhile(() {
+      return Future.delayed(const Duration(seconds: 1), () {
+        if (widget.status == DownloadTaskStatus.complete ||
+            widget.status == DownloadTaskStatus.canceled ||
+            widget.status == DownloadTaskStatus.paused ||
+            widget.status == DownloadTaskStatus.failed) {
+          debugPrint("stopped updating");
+          return false;
+        }
+        debugPrint("updating progress");
+        setState(() {});
+
+        return true;
+      });
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    // _startDownload();
+    refresh();
   }
 
   Future<void> removeTask(String taskId) async {
@@ -115,7 +131,7 @@ class _DownloadProgressWidgetState extends State<DownloadProgressWidget> {
     } else if (widget.status == DownloadTaskStatus.failed) {
       return 'Failed';
     } else if (widget.status == DownloadTaskStatus.complete) {
-      return 'Complete';
+      return 'Completed';
     } else {
       return '';
     }
@@ -143,16 +159,16 @@ class _DownloadProgressWidgetState extends State<DownloadProgressWidget> {
             maxLines: 1,
             overflow: TextOverflow.ellipsis),
         const SizedBox(height: 20.0),
-        if (widget.status != DownloadTaskStatus.complete)
-          Text(
-            'Download progress: ${widget.progress}%',
-            style: const TextStyle(fontSize: 12.0, color: Colors.grey),
-          ),
-        if (widget.status == DownloadTaskStatus.complete)
-          const Text(
-            'Download completed',
-            style: TextStyle(fontSize: 12.0, color: Colors.grey),
-          ),
+        // if (widget.status != DownloadTaskStatus.complete)
+        //   Text(
+        //     'Download progress: ${widget.progress}%',
+        //     style: const TextStyle(fontSize: 12.0, color: Colors.grey),
+        //   ),
+        // if (widget.status == DownloadTaskStatus.complete)
+        Text(
+          _getStatusText(),
+          style: const TextStyle(fontSize: 12.0, color: Colors.grey),
+        ),
         const SizedBox(height: 20.0),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -166,6 +182,7 @@ class _DownloadProgressWidgetState extends State<DownloadProgressWidget> {
                     setState(() {});
                   } else if (widget.status == DownloadTaskStatus.paused) {
                     await FlutterDownloader.resume(taskId: widget.taskId);
+                    refresh();
                     setState(() {});
                   }
                 },

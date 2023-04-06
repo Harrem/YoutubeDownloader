@@ -1,3 +1,6 @@
+import 'dart:isolate';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 import 'downloads.dart';
@@ -34,11 +37,18 @@ class _MainViewState extends State<MainView> {
             });
           },
           items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
             BottomNavigationBarItem(
-                icon: Icon(Icons.download), label: "Downloads"),
+              icon: Icon(Icons.home),
+              label: "Home",
+            ),
             BottomNavigationBarItem(
-                icon: Icon(Icons.settings), label: "Settings"),
+              icon: Icon(Icons.download),
+              label: "Downloads",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              label: "Settings",
+            ),
           ],
         ),
       ),
