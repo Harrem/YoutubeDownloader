@@ -1,15 +1,14 @@
-# ytd
+# Introducing YTD: The Advanced YouTube Video Downloader
 
-A new Flutter project.
+<!-- <img src="ytd_logo.png" alt="YTD Logo" width="200"> -->
 
-## Getting Started
+YTD is a powerful YouTube video downloader app built with Flutter. It integrates the `youtube_explode` library for fetching video download links and utilizes the HTTP package for efficient HTTP requests. With YTD, you can effortlessly select desired formats, qualities, and customize the download path. The app also offers seamless management of your download history. 
 
-This project is a starting point for a Flutter application.
+Impress employers with your technical skills and expertise in developing robust Android apps by showcasing YTD in your portfolio.
 
-A few resources to get you started if this is your first Flutter project:
+<img src="ytd_screenshot.png" alt="YTD App Screenshot" width="400">
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+
 
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
